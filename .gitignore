@@ -5,3 +5,4 @@ config/*
 files/*
 !files/.gitkeep
 database/db.sqlite
+preview.psd
