@@ -1,0 +1,175 @@
+/*!
+ * Copyright 2017 Arkadiusz "Mole" Sygulski
+ * Contact: arkadiusz@sygulski.pl
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import './kube.min';
+@import './mixins';
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-image: url('/images/background.png');
+
+    @include tablet-plus {
+        background: url('/images/secondary_background.png'), url('/images/background.png');
+        background-size: 25vh, auto;
+        background-position: 85% 100%, top left;
+        background-repeat: no-repeat, repeat;
+        background-attachment: fixed;
+    }
+}
+
+main {
+    margin: auto;
+    max-width: 1128px;
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.hero {
+    padding-top: 48px;
+    padding-bottom: 48px;
+    text-align: center;
+
+    p {
+        max-width: 740px;
+        font-size: 21px;
+        line-height: 32px;
+        color: rgba(0, 0, 0, 0.5);
+        margin: 28px auto 0;
+        padding-top: 28px;
+        position: relative;
+
+        &:before {
+            position: absolute;
+            content: '';
+            width: 40px;
+            height: 3px;
+            top: 0;
+            left: 50%;
+            margin-left: -20px;
+            background: #ff3366;
+        }
+    }
+}
+
+#upload {
+    margin: auto;
+}
+
+.upload-caption {
+    text-align: center;
+    font-size: 12px;
+    margin: 6px auto 0;
+}
+
+.copyright {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.menu {
+    li {
+        display: inline-block;
+
+        a {
+            display: block;
+            padding: 5px 10px;
+        }
+    }
+}
+
+.uploads {
+    margin-top: 15px;
+    width: 700px;
+
+    &.hidden {
+        display: none;
+    }
+
+    .file {
+        height: 50px;
+        display: flex;
+        font-size: 14px;
+        margin-bottom: 8px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .thumbnail {
+            width: 50px;
+            flex-shrink: 0;
+
+            img {
+                max-width: 100%;
+                border-radius: 5px;
+            }
+        }
+
+        .meta {
+            padding: 0 15px;
+
+            .size {
+                font-weight: bold;
+            }
+        }
+
+        .status {
+            margin-left: auto;
+            text-align: right;
+
+            .hidden {
+                display: none;
+            }
+        }
+    }
+}
+
+.file-progress {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #fff;
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px #000;
+    color: transparent;
+    display: inline-block;
+    font-size: 0;
+    float: right;
+    height: 10px;
+    margin: 6px 6px 0;
+    overflow: hidden;
+    vertical-align: middle;
+    width: 50px;
+
+    .progress-inner {
+        background-color: #000;
+        height: 10px;
+        margin: 0;
+        width: 0;
+    }
+}

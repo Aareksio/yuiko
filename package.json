@@ -1,0 +1,29 @@
+{
+  "name": "yuiko",
+  "version": "1.0.0",
+  "description": "Simple, self-hosted file upload service",
+  "main": "yuiko.js",
+  "author": "Arkadiusz 'Mole' Sygulski <arkadiusz@sygulski.pl>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-sass": "^3.1.0",
+    "gulp-util": "^3.0.8"
+  },
+  "dependencies": {
+    "async": "^2.1.4",
+    "body-parser": "^1.16.0",
+    "config": "^1.24.0",
+    "express": "^4.14.0",
+    "knex": "^0.12.6",
+    "morgan": "^1.7.0",
+    "multer": "^1.2.1",
+    "path": "^0.12.7",
+    "random-js": "^1.0.8",
+    "serve-favicon": "^2.3.2",
+    "sqlite3": "^3.1.8",
+    "toml": "^2.3.1",
+    "url-join": "^1.1.0"
+  }
+}

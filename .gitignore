@@ -1,0 +1,7 @@
+.idea
+node_modules
+config/*
+!config/default.toml
+files/*
+!files/.gitkeep
+database/db.sqlite

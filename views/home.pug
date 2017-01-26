@@ -1,0 +1,29 @@
+extends layout
+
+block meta
+    meta(name='maxUploadSize' content= locals.config.files.maxUploadSize)
+
+block main
+    .hero
+        h1= locals.config.site.name
+        p= locals.config.site.description
+    #upload.button.outline Click here or drag and drop files
+    p.upload-caption Max upload size per file is 100MB
+    .uploads.hidden
+        #previewTemplate
+            .file
+                .thumbnail
+                    img(data-dz-thumbnail, src='/images/file.png')
+                .meta
+                    p #[span.name(data-dz-name) SomeFileName.png] (#[span.size(data-dz-size) 15 KB])
+                    p.error(data-dz-errormessage)
+                .status
+                    .upload-progress
+                        .file-progress(role='progressbar')
+                            .progress-inner(style='width: 0%;' data-dz-uploadprogress)
+                    .upload-done.hidden
+                        p.link #[a(href='#')]
+
+block scripts
+    script(src='/js/dropzone.min.js')
+    script(src='/js/home.js')

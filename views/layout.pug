@@ -1,0 +1,21 @@
+doctype html
+html
+    head
+        meta(charset='UTF-8')
+        block meta
+        title= locals.config.site.title
+        link(rel='stylesheet', type='text/css', href='/styles/yuiko.css')
+        link(rel='icon', href='/favicon.png')
+    body
+        main
+            block main
+        footer
+            nav.menu
+                ul
+                    li
+                     a(href="/") Home
+                    li
+                     a(href="/contact") Contact
+        block scripts
+
+
