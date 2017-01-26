@@ -23,7 +23,9 @@ const DB = knex(config.get('database'));
 const filesController = {};
 
 filesController.serveFile = (req, res, next) => {
-    DB.table('files').where({ name: req.params.filename })
+    const name = path.basename(req.params.filename, path.extname(req.params.filename));
+    
+    DB.table('files').where({ name })
         .then(result => {
             if (!result.length) return next();
             const file = result[0];

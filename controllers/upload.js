@@ -127,7 +127,7 @@ function respondWithFiles(req, res, files) {
             return {
                 name: file.name,
                 size: file.size,
-                url: urlJoin(config.get('site.url'), config.get('files.accessPath'), file.name)
+                url: urlJoin(config.get('site.url'), config.get('files.accessPath'), file.name + file.extension)
             };
         })
     });
