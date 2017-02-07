@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-const config = require('config');
-
-module.exports = DB => {
-    DB.schema.createTableIfNotExists('files', table => {
-        table.string('name', config.get('files.nameLength')).primary();
-        table.string('original', 255);
-        table.string('file', 32);
-        table.string('extension', 32);
-        table.string('size', 32);
-        table.string('hash', 32);
-        table.string('ip', 15);
-        table.timestamp('timestamp').defaultTo(DB.fn.now());
-    }).then(); // Knex won't execute the query unless we call "then"
-};
+module.exports.UserAccess = Object.freeze({
+    User: 1
+});

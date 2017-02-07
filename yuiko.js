@@ -18,8 +18,6 @@ const bodyParser = require('body-parser');
 const favicon = require('serve-favicon');
 const express = require('express');
 const config = require('config');
-const logger = require('morgan');
-const knex = require('knex');
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
@@ -28,24 +26,20 @@ const filesRouter = require('./routes/files');
 const homeRouter = require('./routes/home');
 const apiRouter = require('./routes/api');
 
-const errorController = require('./controllers/error');
-
-const databaseInit = require('./database/init');
-const DB = knex(config.get('database'));
-databaseInit(DB);
+const errorController = require('./controllers/errorController');
+const database = require('./database/migrations/initialize');
+database.up();
 
 const yuiko = express();
 
-yuiko.enable('trust proxy');
-
 yuiko.locals.config = config;
 
+yuiko.set('trust proxy', 1);
 yuiko.set('views', path.join(__dirname, 'views'));
 yuiko.set('view engine', 'pug');
 yuiko.set('port', config.get('http.port'));
 
 yuiko.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
-yuiko.use(logger('tiny'));
 yuiko.use(bodyParser.urlencoded({ extended: true }));
 yuiko.use(bodyParser.json());
 yuiko.use(express.static(path.join(__dirname, 'public')));
@@ -57,5 +51,6 @@ yuiko.use(errorController.error);
 yuiko.use(errorController.notFound);
 
 const httpServer = http.createServer(yuiko);
+const port = process.env.PORT || config.get('http.port') || 3000;
 httpServer.listen(process.env.PORT || config.get('http.port'));
-httpServer.on('listening', () => { console.log(`Listening on ${config.get('http.port')}!`); });
+httpServer.on('listening', () => { console.log(`Listening on port ${port}!`); });

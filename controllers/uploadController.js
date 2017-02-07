@@ -20,11 +20,10 @@ const config = require('config');
 const multer = require('multer');
 const crypto = require('crypto');
 const async = require('async');
-const knex = require('knex');
 const path = require('path');
 const fs = require('fs');
 
-const DB = knex(config.get('database'));
+const Models = require('../lib/DB').Models;
 const random = new Random(Random.engines.browserCrypto);
 
 const storage = multer.diskStorage({
@@ -35,7 +34,7 @@ const upload = multer({ storage, limits: { fileSize: config.get('files.maxUpload
 
 function processUploadedFiles(req, res, err) {
     if (err) {
-        console.warn(err); // TODO: Handle errors properly
+        console.warn(err);
         return res.status(500).json({ success: false, error: 'Unexpected server error' });
     }
     
@@ -47,14 +46,16 @@ function processUploadedFiles(req, res, err) {
         
         stream.on('data', data => { hash.update(data, 'utf8'); });
         stream.on('end', () => {
+            file.user = req.user;
             file.hash = hash.digest('hex');
             return cb();
         });
     }, err => {
         if (err) {
-            console.warn(err); // TODO: Handle errors properly
+            console.warn(err);
             return res.status(500).json({ success: false, error: 'Unexpected server error' });
         }
+        
         return checkUploadedFiles(req, res);
     });
 }
@@ -64,27 +65,58 @@ function checkUploadedFiles(req, res) {
     const newFiles = [];
     
     async.each(req.files, (file, cb) => {
-        DB.table('files').where({ hash: file.hash, size: file.size })
-            .then(result => {
-                if (result.length) { // If the file already exists
-                    deleteFile(file);
-                    existingFiles.push(result[0]);
+        Models.File.where({
+            hash: file.hash,
+            size: file.size
+        }).fetch({ withRelated: [{ uploads: query => { query.where({ user: req.user ? req.user : null }) } }] }).then(databaseFile => {
+            if (databaseFile) {
+                deleteFile(file);
+                
+                let upload = databaseFile.related('uploads').first();
+                
+                if (upload) {
+                    existingFiles.push({
+                        name: databaseFile.related('uploads').shift().get('name'),
+                        size: databaseFile.get('size'),
+                        extension: databaseFile.get('extension')
+                    });
+    
                     return cb();
                 }
-               
+                
+                file = {
+                    original: file.originalname,
+                    file: databaseFile.get('file'),
+                    extension: databaseFile.get('extension'),
+                    size: file.size,
+                    hash: file.hash,
+                    user: file.user
+                };
+    
+                createUpload(file).then(() => {
+                    existingFiles.push({
+                        name: file.name,
+                        size: file.size,
+                        extension: file.extension
+                    });
+                    
+                    return cb()
+                });
+            } else {
                 newFiles.push({
                     original: file.originalname,
                     file: path.basename(file.path, path.extname(file.path)),
                     extension: path.extname(file.path),
                     size: file.size,
                     hash: file.hash,
-                    ip: req.ip
+                    user: file.user
                 });
-                
+    
                 return cb();
-            });
+            }
+        });
     }, err => {
-        if (err) { // TODO: Handle errors properly
+        if (err) {
             console.warn(err);
             return res.status(500).json({ success: false, error: 'Unexpected server error' });
         }
@@ -98,35 +130,52 @@ function saveUploadedFiles(req, res, newFiles, existingFiles) {
     const files = [];
     
     async.each(newFiles, (file, cb) => {
-        saveFile(file).then(() => cb()).catch(err => cb(err));
+        saveFile(file).then(() => cb()).catch(cb);
     }, err => {
-        if (err) { // TODO: Handle errors properly
+        if (err) {
             console.warn(err);
             return res.status(500).json({ success: false, error: 'Unexpected server error' });
         }
-    
-        Object.assign(files, newFiles, existingFiles);
+        
+        Object.assign(files, newFiles.map(file => {
+            return {
+                name: file.name, size: file.size, extension: file.extension
+            }
+        }), existingFiles);
         return respondWithFiles(req, res, files);
     });
 }
 
 function saveFile(file) {
-    return new Promise((resolve, reject) => {
-        file.name = random.string(config.get('files.nameLength'));
-        
-        DB.table('files').insert(file)
-            .then(resolve)
-            .catch(() => { return resolve(saveFile(file)); });
-    });
+    return new Models.File({
+        hash: file.hash,
+        size: file.size,
+        file: file.file,
+        extension: file.extension
+    }).save().then(() => createUpload(file));
+}
+
+function createUpload(file) {
+    file.name = random.string(config.get('files.nameLength'));
+    
+    return new Models.Upload({
+        name: file.name,
+        original: file.user ? file.original : null,
+        file: file.file,
+        user: file.user ? file.user : null
+    }).save().catch(() => createUpload(file));
 }
 
 function respondWithFiles(req, res, files) {
+    console.log(files);
+    
     return res.json({
         success: true,
         files: files.map(file => {
             return {
                 name: file.name,
-                size: file.size,
+                extension: file.extension,
+                size: parseInt(file.size, 10),
                 url: urlJoin(config.get('site.url'), config.get('files.accessPath'), file.name + file.extension)
             };
         })

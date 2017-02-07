@@ -26,10 +26,10 @@ Visit [yko.im](https://yko.im/) for working example
 1. Run `yuiko.js` using `node yuiko` or whatever process manager you like
 
 ## File upload
-
 Using the website is straight-forward, as the button says, you can either click on it or drag and drop files on the page. 
 Alternatively, you can upload manually by sending `POST` request to `/api/upload` endpoint. 
 The files should be included in field named `files[]`, the `Content-Type` should be set to `multipart/form-data`.
+The request may contain optional `token` field with user identification token.
 
 The api shall respond with `JSON` with 3 possible elements:
 - `success` - `Boolean`, determines whether the request was successful or not
@@ -38,8 +38,9 @@ The api shall respond with `JSON` with 3 possible elements:
 
 The `files` array containes elements of the following structure:
 - `name` - `String`, name on the server
-- `size` - `Number`, file size
-- `url` - `String`, the URL on which the file is accessable
+- `extension` - `String`, extension of the file
+- `size` - `Number`, file size (in bytes)
+- `url` - `String`, the URL on which the file is accessible
 
 Example response:
 ```JSON
@@ -48,15 +49,27 @@ Example response:
   "files": [
     {
       "name": "ABC",
+      "extension": ".jpg",
       "size": 42,
-      "url": "http://yuiko.xyz/files/ABC"
+      "url": "http://yuiko.xyz/files/ABC.jpg"
     }
   ]
 }
 ```
 
+## File serving
+Files are served from `config.files.uploadFolder` under `config.files.accessPath`. 
+The base name of the file (the extension is omitted) is looked up in the database in order to get related file from the storage.
+One file may be served under many names (aliases). Every user will get different name for the same file, all public uploads gets the same name.
+
+For public uploads, `Content-disposition` hear sets `filename` to `name` (as in url). For private uploads `filename` is set to original name.
+That's done to keep public upload more anonymous.
+
+## Users
+User accounts are yet to be implemented.
+
 ## Database
-Default database engine is set to `sqlite3`, although it's fairly easy to change it to any of the engines supported by [Knex](tgriesser/knex).
+Default database engine is set to `sqlite3`, although it's fairly easy to change it to any of the engines supported by [Knex](https://github.com/tgriesser/knex).
 Visit it's page for documentation.
 
 ## Reversed Proxy
@@ -97,3 +110,22 @@ http {
 ```
 
 For SSL support and more options consult [Nginx](https://www.nginx.com) documentation.
+
+## TODOs and developement ideas
+- User accounts
+  - [ ] Creating accounts
+  - [ ] Signing in
+  - [ ] Private upload
+  - [ ] Rank system
+- File management
+  - [ ] Associate an upload with an album
+  - [ ] Delete uploads
+  - [ ] Request new name for a file
+- Control Panel
+  - [ ] File browser
+  - [ ] User management
+- Database migration manager
+- Config helper
+- Container support (Docker?)
+- Better error handling
+- Make the code cleaner

@@ -15,7 +15,7 @@
  */
 
 const express = require('express');
-const filesController = require('../controllers/files');
+const filesController = require('../controllers/filesController');
 
 const router = express.Router();
 

@@ -15,26 +15,27 @@
  */
 
 const config = require('config');
-const knex = require('knex');
 const path = require('path');
 
-const DB = knex(config.get('database'));
+const Models = require('../lib/DB').Models;
 
 const filesController = {};
 
 filesController.serveFile = (req, res, next) => {
     const name = path.basename(req.params.filename, path.extname(req.params.filename));
     
-    DB.table('files').where({ name })
-        .then(result => {
-            if (!result.length) return next();
-            const file = result[0];
+    Models.Upload.where({ name }).fetch({ withRelated: ['file'], require: true })
+        .then(upload => {
+            if (!upload) return next();
             
-            res.sendFile(path.join(config.get('files.uploadFolder'), file.file + file.extension), {
+            const file = upload.related('file').get('file') + upload.related('file').get('extension');
+            
+            res.sendFile(path.join(config.get('files.uploadFolder'), file), {
                 root: './',
-                headers: { 'Content-disposition': 'inline; filename=' + file.original }
+                headers: { 'Content-disposition': 'inline; filename=' + (upload.has('original') ? upload.get('original') : req.params.filename) }
             });
-        });
+        })
+        .catch(() => { return next() });
 };
 
 module.exports = filesController;

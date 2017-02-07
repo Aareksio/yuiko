@@ -23,10 +23,10 @@ body {
     min-height: 100vh;
     background-image: url('/images/background.png');
 
-    @include tablet-plus {
+    @include for-tablet-landscape-up {
         background: url('/images/secondary_background.png'), url('/images/background.png');
         background-size: 25vh, auto;
-        background-position: 85% 100%, top left;
+        background-position: 95% 100%, top left;
         background-repeat: no-repeat, repeat;
         background-attachment: fixed;
     }
