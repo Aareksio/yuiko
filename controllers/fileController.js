@@ -19,9 +19,9 @@ const path = require('path');
 
 const Models = require('../lib/DB').Models;
 
-const filesController = {};
+const fileController = {};
 
-filesController.serveFile = (req, res, next) => {
+fileController.serveFile = (req, res, next) => {
     const name = path.basename(req.params.filename, path.extname(req.params.filename));
     
     Models.Upload.where({ name }).fetch({ withRelated: ['file'], require: true })
@@ -38,4 +38,4 @@ filesController.serveFile = (req, res, next) => {
         .catch(() => { return next() });
 };
 
-module.exports = filesController;
+module.exports = fileController;

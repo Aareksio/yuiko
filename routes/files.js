@@ -15,10 +15,10 @@
  */
 
 const express = require('express');
-const filesController = require('../controllers/filesController');
+const fileController = require('../controllers/fileController');
 
 const router = express.Router();
 
-router.get('/:filename', filesController.serveFile);
+router.get('/:filename', fileController.serveFile);
 
 module.exports = router;
