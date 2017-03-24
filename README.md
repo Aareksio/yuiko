@@ -111,21 +111,5 @@ http {
 
 For SSL support and more options consult [Nginx](https://www.nginx.com) documentation.
 
-## TODOs and developement ideas
-- User accounts
-  - [ ] Creating accounts
-  - [ ] Signing in
-  - [ ] Private upload
-  - [ ] Rank system
-- File management
-  - [ ] Associate an upload with an album
-  - [ ] Delete uploads
-  - [ ] Request new name for a file
-- Control Panel
-  - [ ] File browser
-  - [ ] User management
-- Database migration manager
-- Config helper
-- Container support (Docker?)
-- Better error handling
-- Make the code cleaner
+## Migration from old version
+Please note that until the stable version is out, new releases may be not compatible with old ones. No migration tool is present at the moment.

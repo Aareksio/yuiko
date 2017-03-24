@@ -17,25 +17,22 @@
 const config = require('config');
 const path = require('path');
 
-const Models = require('../lib/DB').Models;
+const Models = require('../models/DB').Models;
+const Files = require('../models/Files');
 
 const fileController = {};
 
 fileController.serveFile = (req, res, next) => {
     const name = path.basename(req.params.filename, path.extname(req.params.filename));
     
-    Models.Upload.where({ name }).fetch({ withRelated: ['file'], require: true })
-        .then(upload => {
-            if (!upload) return next();
-            
-            const file = upload.related('file').get('file') + upload.related('file').get('extension');
-            
-            res.sendFile(path.join(config.get('files.uploadFolder'), file), {
+    Files.findByName(name)
+        .then(file => {
+            res.sendFile(path.join(config.get('files.uploadFolder'), file.filename), {
                 root: './',
-                headers: { 'Content-disposition': 'inline; filename=' + (upload.has('original') ? upload.get('original') : req.params.filename) }
+                headers: { 'Content-disposition': 'inline; filename=' + (file.original ? file.original : req.params.filename) }
             });
         })
-        .catch(() => { return next() });
+        .catch(err => next());
 };
 
 module.exports = fileController;

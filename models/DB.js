@@ -27,14 +27,14 @@ Models.File = bookshelf.Model.extend({
     tableName: 'files',
     columnNames: ['file'],
     uploads: function() {
-        return this.hasMany(Models.Upload, 'file', 'file');
+        return this.hasMany(Models.Upload, 'hash', 'hash');
     }
 });
 
 Models.Upload = bookshelf.Model.extend({
     tableName: 'uploads',
     file: function() {
-        return this.hasOne(Models.File, 'file', 'file');
+        return this.hasOne(Models.File, 'hash', 'hash');
     },
     owner: function() {
         return this.hasOne(Models.User, 'user', 'username');

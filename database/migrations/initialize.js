@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const DB = require('../../lib/DB').DB;
+const DB = require('../../models/DB').DB;
 const Enum = require('../../resources/Enum');
 
 module.exports.up = () => {
@@ -22,7 +22,6 @@ module.exports.up = () => {
         .createTableIfNotExists('files', table => {
             table.string('hash');
             table.string('size');
-            table.string('file');
             table.string('extension');
             
             table.primary(['hash', 'size']);
@@ -31,10 +30,10 @@ module.exports.up = () => {
             table.string('name').primary();
             table.string('original');
             table.string('user');
-            table.string('file');
+            table.string('hash');
             table.timestamp('timestamp').defaultTo(DB.fn.now());
             
-            table.foreign('file').references('files.hash');
+            table.foreign('hash').references('files.hash');
             table.foreign('user').references('users.username');
         })
         .createTableIfNotExists('users', table => {
