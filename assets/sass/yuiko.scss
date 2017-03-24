@@ -34,6 +34,7 @@ body {
 
 main {
     margin: auto;
+    width: 100%;
     max-width: 1128px;
     display: flex;
     flex-direction: column;
@@ -101,8 +102,10 @@ a {
 }
 
 .uploads {
-    margin-top: 15px;
-    width: 700px;
+    margin: 15px auto;
+    padding: 0 15px;
+    width: 100%;
+    max-width: 730px;
 
     &.hidden {
         display: none;
