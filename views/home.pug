@@ -8,7 +8,7 @@ block main
         h1= locals.config.site.name
         p= locals.config.site.description
     #upload.button.outline Click here or drag and drop files
-    p.upload-caption Max upload size per file is 100MB
+    p.upload-caption Max upload size per file is #{locals.config.files.maxUploadSize} MB
     .uploads.hidden
         #previewTemplate
             .file
