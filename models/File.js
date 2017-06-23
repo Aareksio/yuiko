@@ -24,15 +24,15 @@ const Models = require('./DB').Models;
 
 const random = new Random(Random.engines.browserCrypto);
 
-const Files = {};
+const File = {};
 
-Files.calculateMd5 = function(file) {
+File.calculateMd5 = function(file) {
     const hash = crypto.createHash('md5');
     hash.update(file.buffer);
     return hash.digest('hex');
 };
 
-Files.responseFromDatabaseFile = function(databaseFile) {
+File.responseFromDatabaseFile = function(databaseFile) {
     return {
         name: databaseFile.related('uploads').shift().get('name'),
         size: databaseFile.get('size'),
@@ -40,7 +40,7 @@ Files.responseFromDatabaseFile = function(databaseFile) {
     };
 };
 
-Files.responseFromNewUpload = function(file) {
+File.responseFromNewUpload = function(file) {
     return {
         name: file.name,
         size: file.size,
@@ -48,7 +48,7 @@ Files.responseFromNewUpload = function(file) {
     };
 };
 
-Files.createUpload = function(file) {
+File.createUpload = function(file) {
     file.name = random.string(config.get('files.nameLength'));
     
     return new Models.Upload({
@@ -56,22 +56,22 @@ Files.createUpload = function(file) {
         original: file.user ? file.original : null,
         hash: file.hash,
         user: file.user ? file.user : null
-    }).save().catch(() => Files.createUpload(file));
+    }).save().catch(() => File.createUpload(file));
 };
 
-Files.saveUpload = function(file) {
+File.saveUpload = function(file) {
     return new Models.File({
         hash: file.hash,
         size: file.size,
         extension: file.extension
-    }).save().then(() => Files.createUpload(file));
+    }).save().then(() => File.createUpload(file));
 };
 
-Files.saveFileOnDisk = function(file) {
+File.saveFileOnDisk = function(file) {
     return fs.writeFileSync(path.join(config.get('files.uploadFolder'), file.hash + path.extname(file.originalname)), file.buffer);
 };
 
-Files.processFile = function(file) {
+File.processFile = function(file) {
     return new Promise((resolve, reject) => {
         Models.File
             .where({ hash: file.hash, size: file.size })
@@ -79,32 +79,32 @@ Files.processFile = function(file) {
             .then(databaseFile => {
                 if (databaseFile) {
                     if (databaseFile.related('uploads').first()) {
-                        return resolve(Files.responseFromDatabaseFile(databaseFile));
+                        return resolve(File.responseFromDatabaseFile(databaseFile));
                     }
                     
-                    return Files.createUpload(file)
-                        .then(() => resolve(Files.responseFromNewUpload(file)))
+                    return File.createUpload(file)
+                        .then(() => resolve(File.responseFromNewUpload(file)))
                         .catch(err => reject(err));
                 }
                 
-                Files.saveFileOnDisk(file);
-                return Files.saveUpload(file)
-                    .then(() => resolve(Files.responseFromNewUpload(file)))
+                File.saveFileOnDisk(file);
+                return File.saveUpload(file)
+                    .then(() => resolve(File.responseFromNewUpload(file)))
                     .catch(err => reject(err));
             });
     });
 };
 
-Files.processUpload = function(file, cb) {
-    file.hash = Files.calculateMd5(file);
+File.processUpload = function(file, cb) {
+    file.hash = File.calculateMd5(file);
     file.extension = path.extname(file.originalname);
     
-    Files.processFile(file)
+    File.processFile(file)
         .then(response => cb(null, response))
         .catch(err => cb(err));
 };
 
-Files.findByName = function(name, cb) {
+File.findByName = function(name, cb) {
     return new Promise((resolve, reject) => {
         Models.Upload
             .where({ name })
@@ -123,4 +123,4 @@ Files.findByName = function(name, cb) {
     });
 };
 
-module.exports = Files;
+module.exports = File;

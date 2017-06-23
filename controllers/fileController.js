@@ -18,14 +18,14 @@ const config = require('config');
 const path = require('path');
 
 const Models = require('../models/DB').Models;
-const Files = require('../models/Files');
+const File = require('../models/File');
 
 const fileController = {};
 
 fileController.serveFile = (req, res, next) => {
     const name = path.basename(req.params.filename, path.extname(req.params.filename));
     
-    Files.findByName(name)
+    File.findByName(name)
         .then(file => {
             res.sendFile(path.join(config.get('files.uploadFolder'), file.filename), {
                 root: './',

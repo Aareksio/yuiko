@@ -18,7 +18,7 @@ const urlJoin = require('url-join');
 const config = require('config');
 const async = require('async');
 
-const Files = require('../models/Files');
+const File = require('../models/File');
 const Uploader = require('../models/Uploader');
 
 function processUploadedFiles(req, res, err) {
@@ -33,7 +33,7 @@ function processUploadedFiles(req, res, err) {
         file.user = req.user;
     }
     
-    async.map(req.files, Files.processUpload, (err, uploadedFiles) => {
+    async.map(req.files, File.processUpload, (err, uploadedFiles) => {
         if (err) {
             console.warn(err);
             return res.status(500).json({ success: false, error: 'Unexpected server error' });
