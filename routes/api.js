@@ -22,6 +22,6 @@ const redirectController = require('../controllers/redirectController');
 const router = express.Router();
 
 router.post('/upload', postController.handleMultipart, uploadController.upload);
-router.all('/shorten', postController.handleMultipart, redirectController.shorten);
+router.post('/shorten', postController.handleMultipart, redirectController.shorten);
 
 module.exports = router;
