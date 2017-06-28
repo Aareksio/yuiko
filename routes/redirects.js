@@ -15,12 +15,10 @@
  */
 
 const express = require('express');
-const uploadController = require('../controllers/uploadController');
 const redirectController = require('../controllers/redirectController');
 
 const router = express.Router();
 
-router.post('/upload', uploadController.upload);
-router.post('/shorten', redirectController.shorten);
+router.get('/:name', redirectController.redirect);
 
 module.exports = router;

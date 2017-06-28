@@ -48,4 +48,8 @@ Models.User = bookshelf.Model.extend({
     }
 });
 
+Models.Redirect = bookshelf.Model.extend({
+    tableName: 'redirects'
+});
+
 module.exports = { DB, Models };

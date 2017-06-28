@@ -20,6 +20,10 @@ uploadFolder = "files" # Path on the storage to files
 accessPath = "files" # Web path to files
 nameLength = 10 # Filename (in the url) length. Changing this property after creating the database is not supported yet.
 
+[redirects]
+accessPath = "redirect" # Web path to urls
+nameLength = 8
+
 [database]
 client = "sqlite3" # Database driver, read KnexJS docs (http://knexjs.org/) for more info
 useNullAsDefault = true

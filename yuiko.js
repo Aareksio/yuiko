@@ -23,6 +23,7 @@ const http = require('http');
 const fs = require('fs');
 
 const filesRouter = require('./routes/files');
+const redirectsRouter = require('./routes/redirects');
 const homeRouter = require('./routes/home');
 const apiRouter = require('./routes/api');
 
@@ -47,6 +48,7 @@ yuiko.use(express.static(path.join(__dirname, 'public')));
 yuiko.use('/', homeRouter);
 yuiko.use('/api', apiRouter);
 yuiko.use('/' + config.get('files.accessPath'), filesRouter);
+yuiko.use('/' + config.get('redirects.accessPath'), redirectsRouter);
 yuiko.use(errorController.error);
 yuiko.use(errorController.notFound);
 

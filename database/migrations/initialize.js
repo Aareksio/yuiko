@@ -43,6 +43,11 @@ module.exports.up = () => {
             table.string('salt');
             table.timestamp('created').defaultTo(DB.fn.now());
         })
+        .createTableIfNotExists('redirects', table => {
+            table.string('name').primary();
+            table.string('url');
+            table.timestamp('created').defaultTo(DB.fn.now());
+        })
         .then();
 };
 
@@ -51,5 +56,6 @@ module.exports.down = () => {
         .dropTable('files')
         .dropTable('users')
         .dropTable('uploads')
+        .dropTable('redirects')
         .then();
 };
