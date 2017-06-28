@@ -21,12 +21,7 @@ const async = require('async');
 const File = require('../models/File');
 const Uploader = require('../models/Uploader');
 
-function processUploadedFiles(req, res, err) {
-    if (err) {
-        console.warn(err);
-        return res.status(500).json({ success: false, error: 'Unexpected server error' });
-    }
-    
+function processUploadedFiles(req, res, next) {
     if (!req.files.length) return res.status(400).json({ success: false, error: 'No files' });
     
     for (let file of req.files) {
@@ -55,8 +50,6 @@ function processUploadedFiles(req, res, err) {
 
 const uploadController = {};
 
-uploadController.upload = (req, res, next) => {
-    Uploader.uploadFiles(req, res, err => processUploadedFiles(req, res, err));
-};
+uploadController.upload = processUploadedFiles;
 
 module.exports = uploadController;

@@ -16,6 +16,7 @@
 
 const urlJoin = require('url-join');
 const config = require('config');
+const multer = require('multer');
 
 const Redirect = require('../models/Redirect');
 

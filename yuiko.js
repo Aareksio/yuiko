@@ -41,8 +41,8 @@ yuiko.set('view engine', 'pug');
 yuiko.set('port', config.get('http.port'));
 
 yuiko.use(favicon(path.join(__dirname, 'public', 'favicon.png')));
-yuiko.use(bodyParser.urlencoded({ extended: true }));
 yuiko.use(bodyParser.json());
+yuiko.use(bodyParser.urlencoded({ extended: true }));
 yuiko.use(express.static(path.join(__dirname, 'public')));
 
 yuiko.use('/', homeRouter);

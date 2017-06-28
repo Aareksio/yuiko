@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-const express = require('express');
-const postController = require('../controllers/postController');
-const uploadController = require('../controllers/uploadController');
-const redirectController = require('../controllers/redirectController');
+const config = require('config');
+const multer = require('multer');
 
-const router = express.Router();
+const storage = multer.memoryStorage();
 
-router.post('/upload', postController.handleMultipart, uploadController.upload);
-router.all('/shorten', postController.handleMultipart, redirectController.shorten);
+const postController = {};
 
-module.exports = router;
+postController.handleMultipart = multer({
+    storage,
+    limits: { fileSize: config.get('files.maxUploadSize') + 'MB' }
+}).array('files[]');
+
+module.exports = postController;
