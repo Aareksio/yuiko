@@ -34,6 +34,7 @@ database.up();
 const yuiko = express();
 
 yuiko.locals.config = config;
+yuiko.locals.gitHash = require('child_process').execSync('git rev-parse HEAD').toString().trim();
 
 yuiko.set('trust proxy', 1);
 yuiko.set('views', path.join(__dirname, 'views'));
