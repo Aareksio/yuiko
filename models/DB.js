@@ -18,7 +18,7 @@ const config = require('config');
 const knex = require('knex');
 const Bookshelf = require('bookshelf');
 
-const DB = knex(config.get('database'), {debug: true});
+const DB = knex(config.get('database'));
 const bookshelf = Bookshelf(DB);
 
 const Models = {};
