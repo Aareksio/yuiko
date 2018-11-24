@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-const maxUploadSize = document.querySelector('meta[name="maxUploadSize"]').getAttribute('content');
+const uploadLimit = document.querySelector('meta[name="upload-limit"]').getAttribute('content');
+const uploadHost = document.querySelector('meta[name="upload-host"]').getAttribute('content');
+const bigUploadLimit = document.querySelector('meta[name="big-upload-limit"]').getAttribute('content');
+const bigUploadHost = document.querySelector('meta[name="big-upload-host"]').getAttribute('content');
 
 const uploadsElement = document.querySelector('.uploads');
 const previewTemplateElement = document.querySelector('#previewTemplate');
@@ -25,7 +28,7 @@ previewTemplateElement.parentNode.removeChild(previewTemplateElement);
 const dropzone = new Dropzone(document.body, {
     url: '/api/upload',
     paramName: 'files[]',
-    maxFilesize: maxUploadSize,
+    maxFilesize: uploadLimit,
     parallelUploads: 2,
     thumbnailHeight: 50,
     thumbnailWidth: 50,
@@ -58,3 +61,11 @@ dropzone.on('complete', file => {
     file.previewElement.querySelector('.link a').innerText = data.files[0].url;
     file.previewElement.querySelector('.link a').setAttribute('href', data.files[0].url);
 });
+
+
+if (window.location.host === bigUploadHost.replace(/https?:\/\//, '')) {
+    document.querySelector('.upload-limit').textContent = bigUploadLimit;
+  document.querySelector('.upload-caption').textContent += `. Visit ${uploadHost} for uploads up to ${uploadLimit} MB`
+} else {
+    document.querySelector('.upload-caption').textContent += `. Visit ${bigUploadHost} for uploads up to ${bigUploadLimit} MB`
+}

@@ -1,14 +1,17 @@
 extends layout
 
 block meta
-    meta(name='maxUploadSize' content= locals.config.files.maxUploadSize)
+    meta(name='upload-limit' content= locals.config.files.maxUploadSize)
+    meta(name="upload-host" content= locals.config.site.url)
+    meta(name='big-upload-limit' content= locals.config.files.big.maxUploadSize)
+    meta(name='big-upload-host' content= locals.config.files.big.host)
 
 block main
     .hero
         h1= locals.config.site.name
         p= locals.config.site.description
     #upload.button.outline Click here or drag and drop files
-    p.upload-caption Max upload size per file is #{locals.config.files.maxUploadSize} MB
+    p.upload-caption Max upload size per file is #[span.upload-limit #{locals.config.files.maxUploadSize}] MB
     .uploads.hidden
         #previewTemplate
             .file

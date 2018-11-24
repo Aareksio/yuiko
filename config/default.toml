@@ -20,6 +20,10 @@ uploadFolder = "files" # Path on the storage to files
 accessPath = "files" # Web path to files
 nameLength = 10 # Filename (in the url) length. Changing this property after creating the database is not supported yet.
 
+[files.big]
+maxUploadSize = 5000 # MB
+host = "https://big.yuiko.xyz"
+
 [redirects]
 accessPath = "redirect" # Web path to urls
 nameLength = 8
