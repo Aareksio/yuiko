@@ -19,6 +19,8 @@ const uploadHost = document.querySelector('meta[name="upload-host"]').getAttribu
 const bigUploadLimit = document.querySelector('meta[name="big-upload-limit"]').getAttribute('content');
 const bigUploadHost = document.querySelector('meta[name="big-upload-host"]').getAttribute('content');
 
+const isBigDomain = window.location.host === bigUploadHost.replace(/https?:\/\//, '');
+
 const uploadsElement = document.querySelector('.uploads');
 const previewTemplateElement = document.querySelector('#previewTemplate');
 
@@ -28,7 +30,7 @@ previewTemplateElement.parentNode.removeChild(previewTemplateElement);
 const dropzone = new Dropzone(document.body, {
     url: '/api/upload',
     paramName: 'files[]',
-    maxFilesize: uploadLimit,
+    maxFilesize: isBigDomain ? bigUploadLimit : uploadLimit,
     parallelUploads: 2,
     thumbnailHeight: 50,
     thumbnailWidth: 50,
@@ -63,9 +65,9 @@ dropzone.on('complete', file => {
 });
 
 
-if (window.location.host === bigUploadHost.replace(/https?:\/\//, '')) {
+if (isBigDomain) {
     document.querySelector('.upload-limit').textContent = bigUploadLimit;
-  document.querySelector('.upload-caption').textContent += `. Visit ${uploadHost} for uploads up to ${uploadLimit} MB`
+    document.querySelector('.upload-caption').textContent += `. Visit ${uploadHost} for uploads up to ${uploadLimit} MB`
 } else {
     document.querySelector('.upload-caption').textContent += `. Visit ${bigUploadHost} for uploads up to ${bigUploadLimit} MB`
 }
