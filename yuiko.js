@@ -34,7 +34,7 @@ database.up();
 const yuiko = express();
 
 yuiko.locals.config = config;
-yuiko.locals.gitHash = require('child_process').execSync('git rev-parse HEAD').toString().trim();
+yuiko.locals.gitHash = getGitHash();
 
 yuiko.set('trust proxy', 1);
 yuiko.set('views', path.join(__dirname, 'views'));
@@ -57,3 +57,16 @@ const httpServer = http.createServer(yuiko);
 const port = process.env.PORT || config.get('http.port') || 3000;
 httpServer.listen(process.env.PORT || config.get('http.port'));
 httpServer.on('listening', () => { console.log(`Listening on port ${port}!`); });
+
+function getGitHash() {
+  if (process.env.GIT_SHA) {
+    return process.env.GIT_SHA;
+  }
+
+  try {
+    return require('child_process').execSync('git rev-parse HEAD').toString().trim();
+  } catch (error) {
+    console.log('Failed to get git hash: ' + error.message);
+    return null;
+  }
+}
